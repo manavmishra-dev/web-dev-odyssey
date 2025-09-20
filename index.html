@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Interactive Guide to Web Development Careers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .animated-gradient {
+            background-size: 200% 200%;
+            animation: gradient-animation 15s ease infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .nav-btn { transition: all 0.2s ease-in-out; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: auto; height: 300px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .card-item { transition: all 0.2s ease-in-out; }
+        .card-item:hover { 
+            transform: translateY(-6px) scale(1.02); 
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .dark .card-item:hover {
+             box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.2);
+        }
+        /* Timeline Styles */
+        .timeline { display: flex; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin; }
+        .timeline-item { flex: 0 0 120px; text-align: center; cursor: pointer; position: relative; padding-top: 20px; }
+        .timeline-dot { width: 16px; height: 16px; background-color: #a5b4fc; border-radius: 50%; margin: 0 auto; transition: all .3s ease; }
+        .timeline-item.active .timeline-dot, .timeline-item:hover .timeline-dot { background-color: #4f46e5; transform: scale(1.5); }
+        .timeline-line { position: absolute; top: 27px; left: 50%; width: 100%; height: 2px; background-color: #e0e7ff; z-index: -1; }
+        .dark .timeline-line { background-color: #374151; }
+        .dark .timeline-dot { background-color: #4f46e5; }
+        .dark .timeline-item.active .timeline-dot { background-color: #a5b4fc; }
+        /* Career Path Styles */
+        .career-card { transition: all 0.3s ease; }
+        .career-card-details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
+        .career-card.active .career-card-details { max-height: 500px; }
+    </style>
+</head>
+<body class="antialiased bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-300">
+
+    <div class="container mx-auto p-4 md:p-6 max-w-7xl">
+        <header class="relative text-center pt-10 pb-6 mb-12">
+            <button id="theme-toggle" class="absolute top-4 right-4 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors z-20">
+                <span id="theme-icon-sun">☀️</span>
+                <span id="theme-icon-moon" class="hidden">🌙</span>
+            </button>
+            <div class="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 dark:from-indigo-900/50 dark:via-purple-900/50 dark:to-pink-900/50 animated-gradient opacity-30 dark:opacity-40 blur-3xl"></div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 pb-3">The Web Developer Odyssey</h1>
+            <p class="text-lg text-slate-600 dark:text-slate-400 mt-4 max-w-3xl mx-auto">An Advanced Interactive Roadmap for Aspiring Masters of the Web</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-10 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm p-3 rounded-xl shadow-lg sticky top-4 z-10">
+            <button class="nav-btn active text-sm md:text-base font-semibold py-2 px-4 rounded-lg bg-indigo-600 text-white" data-target="foundations">Start Here</button>
+            <button class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-lg text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-slate-700" data-target="skills">Deep Dive</button>
+            <button class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-lg text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-slate-700" data-target="careers">Career Paths</button>
+            <button class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-lg text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-slate-700" data-target="roles">The Landscape</button>
+            <button class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-lg text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-slate-700" data-target="learning">Resources & Projects</button>
+        </nav>
+
+        <main id="main-content">
+            <!-- Foundations Section -->
+            <section id="foundations" class="content-section active p-6 md:p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">The Genesis of the Web</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                    Every expert was once a beginner. This section lays the groundwork, covering not just the essential academic subjects but also the historical context that shaped the modern web. Understanding the 'why' behind the technology is as crucial as knowing the 'how'. Explore the timeline to see how we got here.
+                </p>
+                <div class="mb-10">
+                    <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-4">An Interactive History of the Web</h3>
+                    <div class="relative">
+                        <div id="timeline-container" class="timeline"></div>
+                    </div>
+                    <div id="timeline-details" class="mt-4 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg min-h-[100px]"></div>
+                </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="core-subjects"></div>
+                    <div id="advanced-concepts"></div>
+                </div>
+            </section>
+            
+            <!-- Skills Section -->
+            <section id="skills" class="content-section p-6 md:p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Deep Dive: The Modern Web Stack</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                    The web is built on layers of technology. Here, we dissect the three core domains: Frontend, Backend, and DevOps. The radar charts visualize the typical focus areas for each role. Below them, explore the vast ecosystem of languages, frameworks, and tools that bring the digital world to life.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                    <div class="chart-container"><canvas id="frontendChart"></canvas></div>
+                    <div class="chart-container"><canvas id="backendChart"></canvas></div>
+                    <div class="chart-container"><canvas id="devopsChart"></canvas></div>
+                </div>
+                <div id="skills-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- Career Paths Section -->
+            <section id="careers" class="content-section p-6 md:p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Explore Career Specializations</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                    "Web Developer" is a broad term. The field is rich with specializations that require unique combinations of skills. Use the filters to explore different career paths, from crafting pixel-perfect user interfaces to engineering global-scale cloud infrastructure. Click on any path to reveal the core responsibilities, essential tools, and typical salary expectations.
+                </p>
+                <div class="flex justify-center gap-2 mb-8" id="career-filters"></div>
+                <div id="career-paths-container" class="space-y-4"></div>
+            </section>
+
+            <!-- Roles & Landscape Section -->
+            <section id="roles" class="content-section p-6 md:p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Industry Landscape: Salaries & Titans</h2>
+                 <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                    Web development is a cornerstone of the modern economy. This section provides a snapshot of the current industry landscape, showcasing compensation benchmarks for various roles and highlighting the tech giants and innovators who are constantly pushing the boundaries of what's possible on the web.
+                </p>
+                <div class="max-w-4xl mx-auto mb-12">
+                    <canvas id="salaryChart"></canvas>
+                </div>
+                <h3 class="text-2xl font-semibold text-slate-700 dark:text-slate-200 text-center mt-12 mb-6">Key Players in the Tech Ecosystem</h3>
+                <div id="top-companies" class="flex flex-wrap justify-center items-center gap-6"></div>
+            </section>
+            
+            <!-- Learning Resources Section -->
+            <section id="learning" class="content-section p-6 md:p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">The Armory: Resources & Projects</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                    Continuous learning is the lifeblood of a developer. This curated collection of resources—from foundational books to cutting-edge podcasts and essential coding platforms—is your arsenal for staying sharp. Below that, find project ideas categorized by difficulty to help you build a portfolio that stands out.
+                </p>
+                <div id="learning-resources-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </section>
+        </main>
+    </div>
+
+<script id="app-data">
+const APP_DATA = {
+    timeline: [
+        { year: '1990', title: 'The First Web Browser', description: 'Tim Berners-Lee invents the WorldWideWeb browser and the first web server at CERN.' },
+        { year: '1993', title: 'Mosaic Browser', description: 'The Mosaic browser is released, popularizing the web with its support for inline images.' },
+        { year: '1995', title: 'JavaScript is Born', description: 'Brendan Eich at Netscape creates JavaScript in just 10 days, making web pages interactive.' },
+        { year: '1996', title: 'CSS is Introduced', description: 'The W3C publishes the first CSS specification, separating content (HTML) from presentation.' },
+        { year: '2004', title: 'The Rise of AJAX', description: 'Gmail and Google Maps popularize Asynchronous JavaScript and XML (AJAX), enabling web apps to feel like desktop apps.' },
+        { year: '2006', title: 'jQuery Simplifies JS', description: 'jQuery is released, massively simplifying DOM manipulation and event handling across browsers.' },
+        { year: '2009', title: 'Node.js Arrives', description: 'Ryan Dahl releases Node.js, allowing JavaScript to be run on the server side.' },
+        { year: '2010', title: 'Responsive Design', description: 'Ethan Marcotte coins the term "Responsive Web Design," advocating for websites that adapt to any screen size.' },
+        { year: '2013', title: 'React Changes the Game', description: 'Facebook releases React, a component-based UI library that revolutionizes frontend development.' },
+        { year: '2015', title: 'ES6 Modernizes JS', description: 'ECMAScript 2015 (ES6) is finalized, adding major features like classes, modules, and arrow functions to JavaScript.' },
+    ],
+    foundations: {
+        subjects: {
+            title: "Core Subjects",
+            items: [
+                { name: "Data Structures & Algorithms", description: "The blueprint for efficient computation. Essential for interviews and performance." },
+                { name: "Computer Networks", description: "Understanding HTTP/S, DNS, TCP/IP—the protocols that form the internet's backbone." },
+                { name: "Databases", description: "Mastering how data is stored, retrieved, and managed with SQL and NoSQL systems." },
+                { name: "Software Design Patterns", description: "Reusable solutions to common problems, like Singleton, Factory, and Observer." }
+            ]
+        },
+        concepts: {
+            title: "Advanced Concepts",
+            items: [
+                { name: "Concurrency & Parallelism", description: "Managing multiple tasks at once to build responsive, high-throughput applications." },
+                { name: "Security Principles", description: "Defending against common threats like XSS, CSRF, and SQL Injection. Understanding cryptography." },
+                { name: "Compilers & Interpreters", description: "Knowing how code is translated into machine instructions provides a deeper understanding." },
+                { name: "Performance Optimization", description: "Techniques for measuring and improving speed, from code-level tweaks to infrastructure scaling." }
+            ]
+        }
+    },
+    skills: {
+        charts: {
+            frontend: { canvasId: 'frontendChart', title: 'Frontend Focus', labels: ['UI/UX Design', 'App Logic', 'State Mgmt', 'Performance', 'Build Tools', 'API Integration'], data: [8, 7, 8, 6, 7, 9] },
+            backend: { canvasId: 'backendChart', title: 'Backend Focus', labels: ['API Design', 'Database Mgmt', 'Business Logic', 'Security', 'Scalability', 'Infrastructure'], data: [9, 9, 8, 8, 7, 6] },
+            devops: { canvasId: 'devopsChart', title: 'DevOps Focus', labels: ['CI/CD', 'Infrastructure', 'Monitoring', 'Security', 'Automation', 'Networking'], data: [9, 9, 8, 7, 9, 7] },
+        },
+        grid: [
+            {
+                title: 'Frontend Development',
+                icon: '🖥️',
+                description: 'Crafting the user-facing experience.',
+                items: { 'Languages': ['HTML5', 'CSS3/Sass', 'JavaScript', 'TypeScript'], 'Frameworks': ['React', 'Vue.js', 'Angular', 'Svelte'], 'Advanced': ['WebGL', 'WebAssembly', 'PWAs', 'State Management (Redux/Zustand)'] }
+            },
+            {
+                title: 'Backend Development',
+                icon: '⚙️',
+                description: 'Building the server-side logic and APIs.',
+                items: { 'Languages': ['Node.js', 'Python', 'Go', 'Java', 'Rust'], 'Databases': ['PostgreSQL', 'MongoDB', 'Redis', 'MySQL'], 'Architecture': ['Microservices', 'Serverless', 'Event-Driven', 'GraphQL & REST APIs'] }
+            },
+            {
+                title: 'DevOps & Infrastructure',
+                icon: '🚀',
+                description: 'Automating and scaling the application.',
+                items: { 'Cloud': ['AWS', 'GCP', 'Azure'], 'Containerization': ['Docker', 'Kubernetes'], 'CI/CD': ['GitHub Actions', 'Jenkins', 'Terraform'], 'Monitoring': ['Prometheus', 'Grafana', 'Datadog'] }
+            }
+        ]
+    },
+    careers: [
+        { category: 'Frontend', title: 'UI/UX Engineer', salary: '$110k - $170k', description: 'A specialist who bridges the gap between design and development, focusing on creating intuitive, accessible, and visually polished user interfaces.', tools: ['Figma', 'Storybook', 'Cypress', 'Jest'], skills: ['Accessibility (WCAG)', 'Design Systems', 'Interaction Design', 'CSS Animations'] },
+        { category: 'Frontend', title: 'Frontend Framework Architect', salary: '$160k - $240k', description: 'An expert in a specific framework (e.g., React, Vue) who designs scalable and maintainable frontend architectures for large applications.', tools: ['React', 'Webpack', 'Vite', 'TypeScript'], skills: ['Performance Tuning', 'State Management Patterns', 'Micro-Frontends', 'Code Scalability'] },
+        { category: 'Backend', title: 'API Developer', salary: '$120k - $190k', description: 'Focuses on designing, building, and maintaining robust and secure APIs that serve data to frontend applications and other services.', tools: ['Node.js/Express', 'Postman', 'Swagger/OpenAPI', 'GraphQL'], skills: ['RESTful Principles', 'API Security (OAuth)', 'Database Design', 'Caching Strategies'] },
+        { category: 'Backend', title: 'Distributed Systems Engineer', salary: '$170k - $280k', description: 'Works on building and maintaining large-scale, fault-tolerant backend systems that handle massive amounts of data and traffic.', tools: ['Go/Java/Rust', 'Kafka', 'Kubernetes', 'gRPC'], skills: ['Concurrency', 'Data Partitioning', 'Consensus Algorithms', 'System Observability'] },
+        { category: 'DevOps', title: 'Cloud DevOps Engineer', salary: '$140k - $220k', description: 'Specializes in automating and managing application infrastructure on cloud platforms like AWS, GCP, or Azure.', tools: ['Terraform', 'Ansible', 'Docker', 'Kubernetes', 'AWS'], skills: ['Infrastructure as Code (IaC)', 'CI/CD Pipelines', 'Network Configuration', 'Cloud Security'] },
+        { category: 'Full-Stack', title: 'Full-Stack Product Engineer', salary: '$130k - $210k', description: 'A versatile developer who works across the entire stack to build and ship complete product features, from database to UI.', tools: ['Next.js/Nuxt', 'PostgreSQL', 'Vercel/Netlify', 'Stripe API'], skills: ['Rapid Prototyping', 'User Authentication', 'Product Sense', 'End-to-End Testing'] },
+        { category: 'Specialist', title: 'WebGL / Graphics Engineer', salary: '$150k - $250k', description: 'Focuses on creating high-performance 2D and 3D graphics for the web using technologies like WebGL, Three.js, and shaders.', tools: ['Three.js', 'Babylon.js', 'GLSL', 'Blender'], skills: ['Linear Algebra', '3D Modeling', 'Performance Optimization', 'GPU Architecture'] },
+        { category: 'Specialist', title: 'Ethical Hacker / Security Engineer', salary: '$140k - $230k', description: 'Proactively finds and fixes security vulnerabilities in web applications to protect user data and prevent breaches.', tools: ['Burp Suite', 'Metasploit', 'Nmap', 'OWASP ZAP'], skills: ['Penetration Testing', 'Cryptography', 'Threat Modeling', 'Secure Coding Practices'] },
+    ],
+    roles: {
+            salaries: {
+                labels: ['Junior Developer', 'Mid-Level Developer', 'Senior Developer', 'Lead Engineer', 'Principal Engineer'],
+                data: [
+                    { role: 'Junior Developer', range: [80, 120] },
+                    { role: 'Mid-Level Developer', range: [110, 160] },
+                    { role: 'Senior Developer', range: [150, 220] },
+                    { role: 'Lead Engineer', range: [180, 260] },
+                    { role: 'Principal Engineer', range: [220, 450] }
+                ]
+            },
+        companies: ["Google", "Meta", "Amazon", "Apple", "Netflix", "Microsoft", "Vercel", "Stripe", "Shopify", "Cloudflare", "Figma", "Airbnb"]
+    },
+    learning: {
+        "Foundational Books": [
+            { title: "Eloquent JavaScript", author: "Marijn Haverbeke" },
+            { title: "Designing Data-Intensive Applications", author: "Martin Kleppmann" },
+            { title: "A Philosophy of Software Design", author: "John Ousterhout" },
+        ],
+        "Essential Platforms": [
+            { title: "MDN Web Docs", link: "https://developer.mozilla.org/", desc: "The ultimate web standards bible." },
+            { title: "The Odin Project", link: "https://www.theodinproject.com/", desc: "A free, full-stack curriculum." },
+            { title: "Frontend Masters", link: "https://frontendmasters.com/", desc: "In-depth courses from industry experts." },
+        ],
+        "Practice & Challenge": [
+            { title: "LeetCode", link: "https://leetcode.com/", desc: "For mastering algorithms." },
+            { title: "Frontend Mentor", link: "https://www.frontendmentor.io/", desc: "Build real-world UI projects." },
+            { title: "Codewars", link: "https://www.codewars.com/", desc: "Sharpen skills with code challenges." },
+        ],
+        "Key Project Ideas": [
+            { title: "Interactive Data Dashboard", level: "Intermediate", desc: "Fetch data from a public API and visualize it with charts.", link: "https://github.com/public-apis/public-apis" },
+            { title: "Real-time Collaborative Editor", level: "Advanced", desc: "Use WebSockets to build a Google Docs-like application.", link: "https://github.com/topics/collaborative-editor" },
+            { title: "Full-Stack E-commerce Platform", level: "Expert", desc: "Complete with user auth, product catalog, cart, and payment integration.", link: "https://github.com/topics/ecommerce-website" }
+        ],
+        "Podcasts & Newsletters": [
+            { title: "Syntax.fm", link: "https://syntax.fm/", desc: "Hosted by Wes Bos & Scott Tolinski." },
+            { title: "JavaScript Weekly", link: "https://javascriptweekly.com/", desc: "A weekly roundup of JS news." },
+            { title: "The Changelog", link: "https://changelog.com/", desc: "Conversations with top developers." }
+        ],
+        "Communities": [
+            { title: "Stack Overflow", link: "https://stackoverflow.com/", desc: "The quintessential Q&A platform." },
+            { title: "Dev.to", link: "https://dev.to/", desc: "A supportive community for developers." },
+            { title: "GitHub", link: "https://github.com/", desc: "Where the world builds software." }
+        ]
+    }
+};
+</script>
+
+<script id="app-logic">
+document.addEventListener('DOMContentLoaded', function () {
+    // --- STATE & ELEMENTS ---
+    let salaryChart = null;
+    let skillCharts = {};
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const contentSections = document.querySelectorAll('.content-section');
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('theme-icon-sun');
+    const moonIcon = document.getElementById('theme-icon-moon');
+    const timelineContainer = document.getElementById('timeline-container');
+    const timelineDetails = document.getElementById('timeline-details');
+
+    // --- THEME SWITCHER ---
+    const updateThemeUI = (isDarkMode) => {
+        sunIcon.classList.toggle('hidden', isDarkMode);
+        moonIcon.classList.toggle('hidden', !isDarkMode);
+        // Destroy and recreate charts on theme change
+        if (salaryChart) salaryChart.destroy();
+        createSalaryChart();
+        Object.values(skillCharts).forEach(chart => chart.destroy());
+        createSkillCharts();
+    };
+
+    themeToggleButton.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeUI(isDark);
+    });
+
+    // --- NAVIGATION ---
+    const handleTabClick = (targetId) => {
+        navButtons.forEach(btn => {
+            const isActive = btn.dataset.target === targetId;
+            btn.classList.toggle('active', isActive);
+            btn.classList.toggle('bg-indigo-600', isActive);
+            btn.classList.toggle('text-white', isActive);
+            btn.classList.toggle('text-indigo-700', !isActive);
+            btn.classList.toggle('hover:bg-indigo-100', !isActive);
+            btn.classList.toggle('dark:text-indigo-300', !isActive);
+            btn.classList.toggle('dark:hover:bg-slate-700', !isActive);
+        });
+        contentSections.forEach(section => {
+            section.classList.toggle('active', section.id === targetId);
+        });
+    };
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => handleTabClick(button.dataset.target));
+    });
+
+    // --- CHART CREATION ---
+    const getChartOptions = (isDarkMode) => ({
+        plugins: { legend: { labels: { color: isDarkMode ? '#e2e8f0' : '#334155' } } },
+        scales: {
+            r: {
+                angleLines: { color: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' },
+                grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)' },
+                pointLabels: { color: isDarkMode ? '#e2e8f0' : '#334155', font: { size: 12 } },
+                ticks: { backdropColor: isDarkMode ? '#1e293b' : '#ffffff', color: isDarkMode ? '#e2e8f0' : '#334155' }
+            }
+        }
+    });
+
+    const createSkillCharts = () => {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        Object.values(APP_DATA.skills.charts).forEach(chartConfig => {
+            const ctx = document.getElementById(chartConfig.canvasId).getContext('2d');
+            skillCharts[chartConfig.canvasId] = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: chartConfig.labels,
+                    datasets: [{
+                        label: chartConfig.title,
+                        data: chartConfig.data,
+                        fill: true,
+                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                        borderColor: 'rgb(79, 70, 229)',
+                        pointBackgroundColor: 'rgb(79, 70, 229)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(79, 70, 229)'
+                    }]
+                },
+                options: getChartOptions(isDarkMode)
+            });
+        });
+    };
+
+    const createSalaryChart = () => {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        const ctx = document.getElementById('salaryChart').getContext('2d');
+        salaryChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: APP_DATA.roles.salaries.labels,
+                datasets: [{
+                    label: 'Typical Salary Range (USD)',
+                    data: APP_DATA.roles.salaries.data.map(d => d.range),
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderColor: 'rgba(67, 56, 202, 1)',
+                    borderWidth: 1, borderRadius: 4, borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Annual Salary ($ thousands)', color: isDarkMode ? '#94a3b8' : '#475569' },
+                        ticks: { color: isDarkMode ? '#cbd5e1' : '#64748b' },
+                        grid: { color: isDarkMode ? '#374151' : '#e2e8f0' }
+                    },
+                    y: { ticks: { color: isDarkMode ? '#e2e8f0' : '#334155' }, grid: { display: false } }
+                }
+            }
+        });
+    };
+
+    // --- DYNAMIC CONTENT POPULATION ---
+    const populateTimeline = () => {
+        timelineContainer.innerHTML = APP_DATA.timeline.map((item, index) => `
+            <div class="timeline-item" data-index="${index}">
+                <div class="timeline-dot"></div>
+                <div class="timeline-line"></div>
+                <p class="mt-2 font-semibold text-sm">${item.year}</p>
+            </div>
+        `).join('');
+        timelineContainer.firstElementChild.classList.add('active');
+        updateTimelineDetails(0);
+
+        timelineContainer.addEventListener('click', (e) => {
+            const item = e.target.closest('.timeline-item');
+            if (item) {
+                const index = parseInt(item.dataset.index);
+                timelineContainer.querySelector('.active').classList.remove('active');
+                item.classList.add('active');
+                updateTimelineDetails(index);
+            }
+        });
+    };
+
+    const updateTimelineDetails = (index) => {
+        const item = APP_DATA.timeline[index];
+        timelineDetails.innerHTML = `
+            <h4 class="font-bold text-lg text-slate-800 dark:text-slate-100">${item.title} (${item.year})</h4>
+            <p class="text-slate-600 dark:text-slate-400">${item.description}</p>
+        `;
+    };
+    
+    const populateFoundations = () => {
+        const createList = (containerId, data) => {
+            let html = `<h3 class="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-4">${data.title}</h3><div class="space-y-4">`;
+            html += data.items.map(item => `
+                <div class="p-4 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <p class="font-semibold text-slate-800 dark:text-slate-100">${item.name}</p>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">${item.description}</p>
+                </div>`).join('');
+            document.getElementById(containerId).innerHTML = html + `</div>`;
+        };
+        createList('core-subjects', APP_DATA.foundations.subjects);
+        createList('advanced-concepts', APP_DATA.foundations.concepts);
+    };
+
+    const populateSkillsGrid = () => {
+        const grid = document.getElementById('skills-grid');
+        grid.innerHTML = APP_DATA.skills.grid.map(cat => `
+            <div class="p-5 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">${cat.icon} ${cat.title}</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">${cat.description}</p>
+                ${Object.entries(cat.items).map(([subCat, items]) => `
+                    <div class="mb-3">
+                        <h4 class="font-semibold text-indigo-700 dark:text-indigo-400 text-sm mb-2">${subCat}</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${items.map(item => `<span class="bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 text-xs font-medium px-2.5 py-1 rounded-full">${item}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `).join('');
+    };
+    
+    const populateCareerPaths = () => {
+        const container = document.getElementById('career-paths-container');
+        const filtersContainer = document.getElementById('career-filters');
+        const categories = ['All', ...new Set(APP_DATA.careers.map(c => c.category))];
+
+        filtersContainer.innerHTML = categories.map(cat => `<button class="career-filter-btn px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${cat === 'All' ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}" data-category="${cat}">${cat}</button>`).join('');
+
+        const renderCards = (filterCat) => {
+            const filteredCareers = (filterCat === 'All') ? APP_DATA.careers : APP_DATA.careers.filter(c => c.category === filterCat);
+            container.innerHTML = filteredCareers.map((career, index) => `
+            <div class="career-card border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden" data-category="${career.category}">
+                <button class="w-full text-left p-4 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-lg text-slate-800 dark:text-slate-100">${career.title}</p>
+                            <p class="text-indigo-600 dark:text-indigo-400 font-medium">${career.salary}</p>
+                        </div>
+                        <span class="text-2xl transform transition-transform duration-300">+</span>
+                    </div>
+                </button>
+                <div class="career-card-details p-4 bg-white dark:bg-slate-800">
+                    <p class="mb-4">${career.description}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><h5 class="font-semibold mb-2">Key Skills:</h5><div class="flex flex-wrap gap-2">${career.skills.map(s => `<span class="text-xs font-medium bg-slate-200 dark:bg-slate-600 px-2 py-1 rounded">${s}</span>`).join('')}</div></div>
+                        <div><h5 class="font-semibold mb-2">Common Tools:</h5><div class="flex flex-wrap gap-2">${career.tools.map(t => `<span class="text-xs font-medium bg-slate-200 dark:bg-slate-600 px-2 py-1 rounded">${t}</span>`).join('')}</div></div>
+                    </div>
+                </div>
+            </div>`).join('');
+        };
+        
+        filtersContainer.addEventListener('click', (e) => {
+            if (e.target.matches('.career-filter-btn')) {
+                filtersContainer.querySelectorAll('.career-filter-btn').forEach(btn => btn.classList.remove('bg-indigo-600', 'text-white'));
+                e.target.classList.add('bg-indigo-600', 'text-white');
+                renderCards(e.target.dataset.category);
+            }
+        });
+
+        container.addEventListener('click', e => {
+            const card = e.target.closest('.career-card');
+            if (card) {
+                card.classList.toggle('active');
+                card.querySelector('.transform').classList.toggle('rotate-45');
+            }
+        });
+
+        renderCards('All');
+    };
+    
+    const populateRoles = () => {
+        const companiesContainer = document.getElementById('top-companies');
+        companiesContainer.innerHTML = APP_DATA.roles.companies.map(company => `
+            <div class="flex justify-center items-center py-2 px-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 h-16 w-36">
+                 <p class="text-slate-700 dark:text-slate-200 font-bold text-lg">${company}</p>
+            </div>`).join('');
+    };
+    
+    const populateLearningResources = () => {
+        const container = document.getElementById('learning-resources-container');
+        container.innerHTML = Object.entries(APP_DATA.learning).map(([category, items]) => `
+            <div>
+                <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-4">${category}</h3>
+                <div class="space-y-3">
+                    ${items.map(item => `
+                        <a href="${item.link || '#'}" target="${item.link ? '_blank' : '_self'}" class="card-item block p-4 bg-white dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 ${item.link ? 'hover:border-indigo-500 dark:hover:border-indigo-400' : ''}">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-semibold text-indigo-600 dark:text-indigo-400">${item.title}</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">${item.author || item.desc}</p>
+                                </div>
+                                ${item.level ? `<span class="text-xs font-medium text-indigo-700 bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-900/50 px-2 py-1 rounded-full whitespace-nowrap">${item.level}</span>` : ''}
+                            </div>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>`).join('');
+    };
+
+    // --- INITIALIZATION ---
+    const init = () => {
+        populateTimeline();
+        populateFoundations();
+        populateSkillsGrid();
+        populateCareerPaths();
+        populateRoles();
+        populateLearningResources();
+        createSkillCharts();
+        createSalaryChart();
+        updateThemeUI(document.documentElement.classList.contains('dark'));
+    };
+
+    init();
+});
+</script>
+
+</body>
+</html>
+
