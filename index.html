@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate Interactive Guide to Web Development Careers</title>
+    
+    <!-- MAIN TAILWIND SCRIPT -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CONFIGURATION SCRIPT (MUST BE AFTER MAIN SCRIPT) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
+        // Initial theme check to prevent FOUC (Flash of Unstyled Content)
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -452,7 +463,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const filtersContainer = document.getElementById('career-filters');
         const categories = ['All', ...new Set(APP_DATA.careers.map(c => c.category))];
 
-        filtersContainer.innerHTML = categories.map(cat => `<button class="career-filter-btn px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${cat === 'All' ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}" data-category="${cat}">${cat}</button>`).join('');
+        filtersContainer.innerHTML = categories.map(cat => `
+            <button class="career-filter-btn px-4 py-1.5 text-sm font-medium rounded-full transition-colors 
+            ${cat === 'All' 
+                ? 'bg-indigo-600 text-white' 
+                : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600'}" 
+            data-category="${cat}">${cat}</button>
+        `).join('');
 
         const renderCards = (filterCat) => {
             const filteredCareers = (filterCat === 'All') ? APP_DATA.careers : APP_DATA.careers.filter(c => c.category === filterCat);
@@ -479,8 +496,16 @@ document.addEventListener('DOMContentLoaded', function () {
         
         filtersContainer.addEventListener('click', (e) => {
             if (e.target.matches('.career-filter-btn')) {
-                filtersContainer.querySelectorAll('.career-filter-btn').forEach(btn => btn.classList.remove('bg-indigo-600', 'text-white'));
+                // Reset all buttons to their inactive state first
+                filtersContainer.querySelectorAll('.career-filter-btn').forEach(btn => {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-slate-200', 'dark:bg-slate-700', 'hover:bg-slate-300', 'dark:hover:bg-slate-600');
+                });
+
+                // Then, set the clicked button to the active state
                 e.target.classList.add('bg-indigo-600', 'text-white');
+                e.target.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'hover:bg-slate-300', 'dark:hover:bg-slate-600');
+                
                 renderCards(e.target.dataset.category);
             }
         });
@@ -544,4 +569,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
 
